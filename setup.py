@@ -66,9 +66,10 @@ if get_platform().startswith('win'):
         ('PYACTIVEMQ_ENABLE_DOCSTRINGS', 0)
         ]
 else:
-    ver = '3.5.0'
+    ver = '3.7.0'
     include_dirs = [
-        '/opt/activemq-cpp-{ver}/include/activemq-cpp-{ver}'.format(ver=ver)
+        '/opt/activemq-cpp-{ver}/include/activemq-cpp-{ver}'.format(ver=ver),
+        '/opt/activemq-cpp-library-{ver}/src/main'.format(ver=ver)
 
         ]
     libraries = [
@@ -77,11 +78,12 @@ else:
         'boost_python'
         ]
     library_dirs = [
-        '/opt/activemq-cpp-{ver}/lib'.format(ver=ver)
+        '/opt/activemq-cpp-{ver}/lib'.format(ver=ver),
+	'/opt/activemq-cpp-library-{ver}/lib'.format(ver=ver)
         ]
     extra_compile_args = []
     extra_link_args = [
-        '-Wl,-rpath,/opt/activemq-cpp-{ver}/lib'.format(ver=ver)
+        '-Wl,-rpath,/opt/activemq-cpp-library-{ver}/lib'.format(ver=ver)
         ]
     define_macros = [
         ('BOOST_PYTHON_NO_PY_SIGNATURES', 1),
@@ -100,7 +102,7 @@ ext = Extension('pyactivemq',
                 depends=[],
                 define_macros=define_macros)
 setup(name='pyactivemq',
-      version='0.3.5',
+      version='0.3.7',
       author='Albert Strasheim',
       author_email='fullung@gmail.com',
       url='http://code.google.com/p/pyactivemq/',
