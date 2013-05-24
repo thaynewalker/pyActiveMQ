@@ -2,3 +2,10 @@ pyActiveMQ
 =====================
 
 This is a python wrapper around the ActiveMQ-CPP library (CMS).
+
+To install it you need to download "ActiveMQ-CPP":https://activemq.apache.org/cms/activemq-cpp-370-release.html and unzip it to your @/opt@ folder
+Then go to the folder and type:
+<pre>
+sudo python setup.py install
+</pre>
+This will compile and install the pyactivemq library.
