@@ -38,33 +38,34 @@ topic = producer_session.createTopic('topic')
 producer = producer_session.createProducer(topic)
 
 # create infinite queue that is shared by consumers
-import Queue
-queue = Queue.Queue(0)
+import queue
+q = queue.Queue(0)
 
 # Keep consumers in a list, because if we don't hold a reference to
 # the consumer, it is closed
 consumers = []
-for i in xrange(nconsumers):
+for i in range(nconsumers):
     # Create multiple consumers in separate sessions
     session = conn.createSession()
     consumer = session.createConsumer(topic)
-    listener = MessageListener('consumer%d' % i, queue)
+    listener = MessageListener('consumer%d' % i, q)
     consumer.messageListener = listener
     consumers.append(consumer)
 
 conn.start()
 textMessage = producer_session.createTextMessage()
-for i in xrange(nmessages):
+for i in range(nmessages):
     textMessage.text = 'hello%d' % (i,)
     producer.send(textMessage)
 
 qsize = nmessages * nconsumers
 try:
-    for i in xrange(qsize):
-        message = queue.get(block=True, timeout=5)
-        print message
+    for i in range(qsize):
+        message = q.get(block=True, timeout=5)
+        print(message)
 except Queue.Empty:
-    raise AssertionError, 'Expected %d messages in queue' % qsize
-assert queue.empty()
+    print( 'Expected %d messages in queue' % qsize)
+
+assert q.empty()
 
 conn.close()

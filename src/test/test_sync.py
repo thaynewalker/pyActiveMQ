@@ -25,10 +25,10 @@ class _test_sync:
     random_queue = random_queue
 
     def assertAttrReadOnly(self, obj, attrname):
-        self.assert_(hasattr(obj, attrname))
+        self.assertTrue(hasattr(obj, attrname))
         try:
             setattr(obj, attrname, None)
-            self.assert_(False, '%s attribute must be read-only' % attrname)
+            self.assertTrue(False, '%s attribute must be read-only' % attrname)
         except AttributeError:
             pass
 
@@ -36,8 +36,8 @@ class _test_sync:
         self.assertEqual(2, sys.getrefcount(self.conn))
         conn = self.conn
         self.assertEqual(3, sys.getrefcount(conn))
-        self.assert_(isinstance(conn, pyactivemq.Closeable))
-        self.assert_(isinstance(conn, pyactivemq.Connection))
+        self.assertTrue(isinstance(conn, pyactivemq.Closeable))
+        self.assertTrue(isinstance(conn, pyactivemq.Connection))
         AcknowledgeMode = pyactivemq.AcknowledgeMode
         session0 = conn.createSession()
         session1 = conn.createSession(AcknowledgeMode.AUTO_ACKNOWLEDGE)
@@ -45,7 +45,7 @@ class _test_sync:
         session3 = conn.createSession(AcknowledgeMode.CLIENT_ACKNOWLEDGE)
         session4 = conn.createSession(AcknowledgeMode.SESSION_TRANSACTED)
         self.assertEqual(8, sys.getrefcount(conn))
-        self.assert_(conn.clientID is not None)
+        self.assertTrue(conn.clientID is not None)
         conn.close()
         self.assertEqual('', conn.clientID)
         del conn, session0, session1, session2, session3, session4
@@ -53,7 +53,7 @@ class _test_sync:
 
     def test_Connection_ExceptionListener(self):
         conn = self.conn
-        self.assert_(conn.exceptionListener is None)
+        self.assertTrue(conn.exceptionListener is None)
         class ExceptionListener(pyactivemq.ExceptionListener):
             def onException(ex):
                 pass
@@ -61,16 +61,16 @@ class _test_sync:
         self.assertEqual(2, sys.getrefcount(exlistener))
         conn.exceptionListener = exlistener
         self.assertEqual(3, sys.getrefcount(exlistener))
-        self.assert_(exlistener is conn.exceptionListener)
+        self.assertTrue(exlistener is conn.exceptionListener)
         del exlistener
         self.assertEqual(2, sys.getrefcount(conn.exceptionListener))
         conn.exceptionListener = None
 
     def test_Session(self):
         session = self.conn.createSession()
-        self.assert_(isinstance(session, pyactivemq.Closeable))
-        self.assert_(isinstance(session, pyactivemq.Session))
-        self.assert_(not session.transacted)
+        self.assertTrue(isinstance(session, pyactivemq.Closeable))
+        self.assertTrue(isinstance(session, pyactivemq.Session))
+        self.assertTrue(not session.transacted)
         AcknowledgeMode = pyactivemq.AcknowledgeMode
         ackmode = AcknowledgeMode.AUTO_ACKNOWLEDGE
         self.assertEqual(ackmode, session.acknowledgeMode)
@@ -83,12 +83,12 @@ class _test_sync:
         topic = session.createTopic("topic")
         self.assertEqual("topic", topic.name)
         self.assertEqual(DestinationType.TOPIC, topic.destinationType)
-        self.assert_(isinstance(topic, pyactivemq.Destination))
+        self.assertTrue(isinstance(topic, pyactivemq.Destination))
         topic2 = session.createTopic("topic2")
         queue = session.createQueue("queue")
         self.assertEqual("queue", queue.name)
         self.assertEqual(DestinationType.QUEUE, queue.destinationType)
-        self.assert_(isinstance(queue, pyactivemq.Destination))
+        self.assertTrue(isinstance(queue, pyactivemq.Destination))
         queue2 = session.createQueue("queue2")
         self.assertEqual(topic, topic)
         self.assertNotEqual(topic, topic2)
@@ -106,15 +106,15 @@ class _test_sync:
         self.assertEqual(2, sys.getrefcount(session))
         consumer1 = session.createConsumer(topic)
         self.assertEqual(3, sys.getrefcount(session))
-        self.assert_(isinstance(consumer1, pyactivemq.Closeable))
-        self.assert_(isinstance(consumer1, pyactivemq.MessageConsumer))
+        self.assertTrue(isinstance(consumer1, pyactivemq.Closeable))
+        self.assertTrue(isinstance(consumer1, pyactivemq.MessageConsumer))
         consumer2 = session.createConsumer(topic, "select1")
         self.assertEqual(4, sys.getrefcount(session))
         self.assertEqual('select1', consumer2.messageSelector)
         try:
             consumer2.messageSelector = 'select2'
             # can't set message selector after consumer creation
-            self.assert_(False, 'Expected AttributeError to be raised')
+            self.assertTrue(False, 'Expected AttributeError to be raised')
         except AttributeError:
             pass
         consumer3 = session.createConsumer(topic, "", True)
@@ -161,10 +161,10 @@ class _test_sync:
             'string1' : ('hello123', msg.getStringProperty, msg.setStringProperty)
             }
 
-        for name, (value, getter, setter) in properties.iteritems():
-            self.assert_(not msg.propertyExists(name))
+        for name, (value, getter, setter) in properties.items():
+            self.assertTrue(not msg.propertyExists(name))
             setter(name, value)
-            self.assert_(msg.propertyExists(name))
+            self.assertTrue(msg.propertyExists(name))
             newvalue = getter(name)
             if name in ['float1', 'double1']:
                 self.assertAlmostEqual(value, newvalue, 5)
@@ -192,17 +192,17 @@ class _test_sync:
     def test_Message(self):
         session = self.conn.createSession()
         message = session.createMessage()
-        self.assert_(isinstance(message, pyactivemq.Message))
-        self.assert_(message.destination is None)
-        self.assert_(message.replyTo is None)
+        self.assertTrue(isinstance(message, pyactivemq.Message))
+        self.assertTrue(message.destination is None)
+        self.assertTrue(message.replyTo is None)
         self._check_Message_properties(message)
         message2 = copy.deepcopy(message)
 
     def test_TextMessage(self):
         session = self.conn.createSession()
         textMessage = session.createTextMessage()
-        self.assert_(isinstance(textMessage, pyactivemq.Message))
-        self.assert_(isinstance(textMessage, pyactivemq.TextMessage))
+        self.assertTrue(isinstance(textMessage, pyactivemq.Message))
+        self.assertTrue(isinstance(textMessage, pyactivemq.TextMessage))
         self._check_Message_properties(textMessage)
 
         textMessage.text = "bye"
@@ -219,15 +219,15 @@ class _test_sync:
         self.assertEqual(1, sys.getrefcount(textMessage.replyTo))
         # TODO allow derived type of destination to be retrieved from
         # replyTo and destination properties
-        #self.assert_(isinstance(textMessage.replyTo, pyactivemq.Queue))
+        #self.assertTrue(isinstance(textMessage.replyTo, pyactivemq.Queue))
 
         textMessage2 = copy.deepcopy(textMessage)
 
     def test_send_StreamMessage(self):
         session = self.conn.createSession()
         streamMessage = session.createStreamMessage()
-        self.assert_(isinstance(streamMessage, pyactivemq.Message))
-        self.assert_(isinstance(streamMessage, pyactivemq.StreamMessage))
+        self.assertTrue(isinstance(streamMessage, pyactivemq.Message))
+        self.assertTrue(isinstance(streamMessage, pyactivemq.StreamMessage))
         self._check_Message_properties(streamMessage)
         streamMessage.writeBoolean(True)
         streamMessage.writeBoolean(False)
@@ -247,22 +247,22 @@ class _test_sync:
     def test_BytesMessage(self):
         session = self.conn.createSession()
         bytesMessage = session.createBytesMessage()
-        self.assert_(isinstance(bytesMessage, pyactivemq.Message))
-        self.assert_(isinstance(bytesMessage, pyactivemq.BytesMessage))
+        self.assertTrue(isinstance(bytesMessage, pyactivemq.Message))
+        self.assertTrue(isinstance(bytesMessage, pyactivemq.BytesMessage))
         self._check_Message_properties(bytesMessage)
 
         try:
             bytesMessage.bodyLength
         except Exception:
             exctype, value = sys.exc_info()[:2]
-            self.assert_(exctype is pyactivemq.CMSException)
+            self.assertTrue(exctype is pyactivemq.CMSException)
 
         bytesMessage.writeString('hello123')
 
         bytesMessage.reset()
 
         self.assertEqual('hello123', bytesMessage.readString())
-        self.assert_(bytesMessage.replyTo is None)
+        self.assertTrue(bytesMessage.replyTo is None)
         queue = session.createQueue("queue")
         bytesMessage.replyTo = queue
         self.assertEqual(queue, bytesMessage.replyTo)
@@ -278,7 +278,7 @@ class _test_sync:
 
         topic = self.random_topic(session)
         consumer = session.createConsumer(topic)
-        self.assert_(consumer.messageListener is None)
+        self.assertTrue(consumer.messageListener is None)
         producer = session.createProducer(topic)
         del session
 
@@ -287,16 +287,16 @@ class _test_sync:
         producer.send(textMessage)
         msg = consumer.receive(5000)
 
-        self.assert_(msg is not None)
-        self.assert_(isinstance(msg, pyactivemq.Message))
-        self.assert_(isinstance(msg, pyactivemq.TextMessage))
+        self.assertTrue(msg is not None)
+        self.assertTrue(isinstance(msg, pyactivemq.Message))
+        self.assertTrue(isinstance(msg, pyactivemq.TextMessage))
         #self.assertEqual(str(msg.destination), str(topic))
         self.assertEqual(topic, msg.destination)
         #self.assertEqual(str(queue), str(msg.replyTo))
         self.assertEqual(queue, msg.replyTo)
 
         msg = consumer.receive(50)
-        self.assert_(msg is None)
+        self.assertTrue(msg is None)
 
     def test_send_BytesMessage(self):
         session = self.conn.createSession()
@@ -311,10 +311,10 @@ class _test_sync:
         producer.send(bytesMessage)
         msg = consumer.receive(5000)
 
-        self.assert_(msg is not None)
-        self.assert_(isinstance(msg, pyactivemq.Message))
-        self.assert_(isinstance(msg, pyactivemq.BytesMessage))
-        self.assertEqual('hello123', msg.bodyBytes)
+        self.assertTrue(msg is not None)
+        self.assertTrue(isinstance(msg, pyactivemq.Message))
+        self.assertTrue(isinstance(msg, pyactivemq.BytesMessage))
+        self.assertEqual(b'hello123', msg.bodyBytes)
         self.assertEqual(topic, msg.destination)
         #self.assertEqual(str(topic), str(msg.destination))
         #self.assertEqual(str(topic), str(msg.replyTo))
@@ -324,13 +324,13 @@ class _test_sync:
         bytesMessage.writeBytes('hello123')
         producer.send(bytesMessage)
         msg = consumer.receive(5000)
-        self.assert_(msg is not None)
+        self.assertTrue(msg is not None)
         # XXX this doesn't return anything yet
         #self.assertEqual('hello123', msg.readBytes())
         self.assertEqual('', msg.readBytes())
 
         msg = consumer.receive(50)
-        self.assert_(msg is None)
+        self.assertTrue(msg is None)
 
     def test_BytesMessage_bodyBytes(self):
         session = self.conn.createSession()
@@ -345,27 +345,27 @@ class _test_sync:
         producer.send(bytesMessage)
         msg = consumer.receive(5000)
 
-        self.assert_(msg is not None)
-        self.assert_(isinstance(msg, pyactivemq.Message))
-        self.assert_(isinstance(msg, pyactivemq.BytesMessage))
+        self.assertTrue(msg is not None)
+        self.assertTrue(isinstance(msg, pyactivemq.Message))
+        self.assertTrue(isinstance(msg, pyactivemq.BytesMessage))
         self.assertEqual(3, msg.bodyLength)
-        self.assertEqual('\x00\x00\x00', msg.bodyBytes)
+        self.assertEqual(b'\x00\x00\x00', msg.bodyBytes)
 
         bytesMessage = session.createBytesMessage()
         bytesMessage.bodyBytes = '\x01\x02\x03'
         producer.send(bytesMessage)
         del producer
         msg = consumer.receive(5000)
-        self.assert_(msg is not None)
-        self.assert_(isinstance(msg, pyactivemq.Message))
-        self.assert_(isinstance(msg, pyactivemq.BytesMessage))
+        self.assertTrue(msg is not None)
+        self.assertTrue(isinstance(msg, pyactivemq.Message))
+        self.assertTrue(isinstance(msg, pyactivemq.BytesMessage))
         self.assertEqual(3, msg.bodyLength)
-        self.assertEqual('\x01\x02\x03', msg.bodyBytes)
+        self.assertEqual(b'\x01\x02\x03', msg.bodyBytes)
 
     def test_transaction(self):
         from pyactivemq import AcknowledgeMode
         session = self.conn.createSession(AcknowledgeMode.SESSION_TRANSACTED)
-        self.assert_(session.transacted)
+        self.assertTrue(session.transacted)
         topic = self.random_topic(session)
         consumer = session.createConsumer(topic)
         producer = session.createProducer(topic)
@@ -378,34 +378,34 @@ class _test_sync:
         producer.send(textMessage)
         session.commit()
         msg = consumer.receive(10000)
-        self.assert_(msg is not None)
+        self.assertTrue(msg is not None)
         self.assertEqual('hello123', msg.text)
         # two sends were rolled back, so expect only one message
         msg = consumer.receive(500)
-        self.assert_(msg is None)
+        self.assertTrue(msg is None)
         # roll session back so message is available again
         session.rollback()
         msg = consumer.receive(1000)
-        self.assertEqual('hello123', msg.text)
-        self.assert_(msg is not None)
+        self.assertTrue(msg is not None)
+        self.assertEqual(b'hello123', msg.text)
         msg = consumer.receive(500)
-        self.assert_(msg is None)
+        self.assertTrue(msg is None)
         session.commit()
 
     def test_temporary_topic(self):
         session = self.conn.createSession()
         temptopic = session.createTemporaryTopic()
-        self.assert_(len(temptopic.name) > 0)
-        self.assert_(isinstance(temptopic, pyactivemq.Destination))
-        self.assert_(isinstance(temptopic, pyactivemq.TemporaryTopic))
+        self.assertTrue(len(temptopic.name) > 0)
+        self.assertTrue(isinstance(temptopic, pyactivemq.Destination))
+        self.assertTrue(isinstance(temptopic, pyactivemq.TemporaryTopic))
         self.assertEqual(pyactivemq.DestinationType.TEMPORARY_TOPIC,
                          temptopic.destinationType)
 
     def test_temporary_queue(self):
         session = self.conn.createSession()
         tempqueue = session.createTemporaryQueue()
-        self.assert_(len(tempqueue.name) > 0)
-        self.assert_(isinstance(tempqueue, pyactivemq.Destination))
-        self.assert_(isinstance(tempqueue, pyactivemq.TemporaryQueue))
+        self.assertTrue(len(tempqueue.name) > 0)
+        self.assertTrue(isinstance(tempqueue, pyactivemq.Destination))
+        self.assertTrue(isinstance(tempqueue, pyactivemq.TemporaryQueue))
         self.assertEqual(pyactivemq.DestinationType.TEMPORARY_QUEUE,
                          tempqueue.destinationType)

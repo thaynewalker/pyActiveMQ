@@ -28,7 +28,7 @@ static PyObject* pyex = PyErr_NewException("pyactivemq.CMSSecurityException", Py
 
 void CMSSecurityException_translator(const CMSSecurityException& e)
 {
-    PyObject* message = PyString_FromString(e.getMessage().c_str());
+    PyObject* message = PyBytes_FromString(e.getMessage().c_str());
     PyObject_SetAttrString(pyex, "message", message);
     PyErr_SetString(pyex, e.getStackTraceString().c_str());
 }

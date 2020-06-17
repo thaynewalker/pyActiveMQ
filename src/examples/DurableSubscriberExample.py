@@ -31,7 +31,7 @@ class DurableSubscriber:
 
         def onMessage(self, message):
             if isinstance(message, pyactivemq.TextMessage):
-                print 'SUBSCRIBER: Reading Message: ' + message.text
+                print('SUBSCRIBER: Reading Message:' , message.text)
             else:
                 self.monitor.set()
 
@@ -46,7 +46,7 @@ class DurableSubscriber:
         self.topic = topic
 
     def startSubscriber(self):
-        print 'Starting subscriber'
+        print('Starting subscriber')
         self.connection.stop()
         subscriber = self.session.createDurableConsumer(self.topic, "MakeItLast", '', False)
         listener = self.TextListener()
@@ -58,7 +58,7 @@ class DurableSubscriber:
         subscriber = self.subscriber
         listener = subscriber.messageListener
         listener.monitor.wait()
-        print 'Closing subscriber'
+        print('Closing subscriber')
         subscriber.close()
 
     def finish(self):
@@ -80,9 +80,9 @@ class MultiplePublisher:
         NUMMSGS = 3
         MSG_TEXT = 'Here is a message'
         message = self.session.createTextMessage()
-        for i in xrange(self.startindex, self.startindex + NUMMSGS):
+        for i in range(self.startindex, self.startindex + NUMMSGS):
             message.text = MSG_TEXT + ' %d' % (i+1)
-            print 'PUBLISHER: Publishing message: ' + message.text
+            print('PUBLISHER: Publishing message:' , message.text)
             self.producer.send(message)
         self.startindex = self.startindex + NUMMSGS
         self.producer.send(self.session.createMessage())

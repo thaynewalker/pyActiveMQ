@@ -54,7 +54,7 @@ class test_pyactivemq(unittest.TestCase):
             'Topic'
             ]
         for name in names:
-            self.assert_(name in dir(pyactivemq), '%s not in dir' % name)
+            self.assertTrue(name in dir(pyactivemq), '%s not in dir' % name)
 
     def test_version(self):
         self.assertEqual('0.2.0', pyactivemq.__version__)
@@ -107,7 +107,7 @@ class test_ActiveMQConnectionFactory(unittest.TestCase):
             conn = f.createConnection()
         except Exception:
             exctype, value = sys.exc_info()[:2]
-            self.assert_(exctype is pyactivemq.CMSException)
+            self.assertTrue(exctype is pyactivemq.CMSException)
 
 class test_DestinationType(unittest.TestCase):
     def test_values(self):

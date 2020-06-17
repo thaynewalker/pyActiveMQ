@@ -66,7 +66,7 @@ if get_platform().startswith('win'):
         ('PYACTIVEMQ_ENABLE_DOCSTRINGS', 0)
         ]
 else:
-    ver = '3.7.0'
+    ver = '3.9.5'
     include_dirs = [
         '/opt/activemq-cpp-{ver}/include/activemq-cpp-{ver}'.format(ver=ver),
         '/opt/activemq-cpp-library-{ver}/src/main'.format(ver=ver)
@@ -75,7 +75,7 @@ else:
     libraries = [
         'activemq-cpp',
         'uuid',
-        'boost_python'
+        'boost_python3'
         ]
     library_dirs = [
         '/opt/activemq-cpp-{ver}/lib'.format(ver=ver),
@@ -102,7 +102,7 @@ ext = Extension('pyactivemq',
                 depends=[],
                 define_macros=define_macros)
 setup(name='pyactivemq',
-      version='0.3.7',
+      version='0.3.5',
       author='Albert Strasheim',
       author_email='fullung@gmail.com',
       url='http://code.google.com/p/pyactivemq/',

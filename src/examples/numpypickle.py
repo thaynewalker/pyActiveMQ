@@ -25,7 +25,7 @@ npickles = 1000
 # generate random array containing 100*100 doubles
 x = N.random.randn(100, 100)
 
-f = ActiveMQConnectionFactory('tcp://localhost:61613?wireFormat=stomp')
+f = ActiveMQConnectionFactory('tcp://localhost:61616?wireFormat=openwire')
 conn = f.createConnection()
 session = conn.createSession(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
 queue = session.createQueue('arrays')
@@ -35,7 +35,7 @@ producer.deliveryMode = DeliveryMode.NON_PERSISTENT
 conn.start()
 
 def test():
-    for i in xrange(npickles):
+    for i in range(npickles):
         m = session.createBytesMessage()
         # pickle array into BytesMessage's body
         m.bodyBytes = x.dumps()
@@ -53,5 +53,5 @@ delta = t.timeit(1)
 conn.close()
 
 mibps = npickles * x.nbytes / (1024.0 * 1024.0) / delta
-print 'pickled %d arrays, each %d bytes, in %f seconds (%.4f MiB/s)' % \
-    (npickles, x.nbytes, delta, mibps)
+print('pickled %d arrays, each %d bytes, in %f seconds (%.4f MiB/s)' % \
+    (npickles, x.nbytes, delta, mibps))

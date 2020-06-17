@@ -28,9 +28,9 @@ def test_ExceptionListener():
             self.ex = ex
     conn = f.createConnection()
     conn.exceptionListener = ExceptionListener()
-    print 'Sleeping. Kill the broker now...'
+    print('Sleeping. Kill the broker now...')
     time.sleep(20)
-    print conn.exceptionListener.ex
+    print(conn.exceptionListener.ex)
     del conn
 
 if __name__ == '__main__':

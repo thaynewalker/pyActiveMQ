@@ -84,7 +84,8 @@ static const char* BytesMessage_writeUTF_docstring = "Writes an UTF string to th
 
 static PyObject* BytesMessage_getBodyBytes(BytesMessage const& self)
 {
-    return py::incref(py::str(reinterpret_cast<const char*>(self.getBodyBytes()), self.getBodyLength()).ptr());
+    return PyBytes_FromStringAndSize(reinterpret_cast<char*>(self.getBodyBytes()), self.getBodyLength());
+    //return py::incref(reinterpret_cast<const char*>(self.getBodyBytes()), self.getBodyLength()).ptr();
 }
 
 static void BytesMessage_setBodyBytes(BytesMessage& This, const std::string& buffer)

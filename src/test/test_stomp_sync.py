@@ -42,7 +42,7 @@ class test_stomp_sync(_test_sync, unittest.TestCase):
         try:
             session.createMapMessage()
             self.assert_(False)
-        except CMSException, e:
+        except CMSException as e:
             self.assert_(e.message.find('No Stomp Support') >= 0)
 
     def test_nolocal(self):

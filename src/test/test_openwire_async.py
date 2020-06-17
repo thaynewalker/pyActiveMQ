@@ -19,7 +19,7 @@ restore_path()
 
 from test_async import _test_async
 import unittest
-import Queue
+import queue
 
 class test_openwire_async(_test_async, unittest.TestCase):
     def setUp(self):
@@ -39,7 +39,7 @@ class test_openwire_async(_test_async, unittest.TestCase):
 
         nconsumers = 7
         consumers = []
-        for i in xrange(1, nconsumers + 1):
+        for i in range(1, nconsumers + 1):
             session = self.conn.createSession()
             selector = 'int1%%%d=0' % i
             consumer = session.createConsumer(topic, selector)
@@ -50,24 +50,24 @@ class test_openwire_async(_test_async, unittest.TestCase):
         self.conn.start()
         textMessage = session.createTextMessage()
         nmessages = 200
-        for i in xrange(nmessages):
+        for i in range(nmessages):
             textMessage.setIntProperty('int1', i)
             producer.send(textMessage)
-            for j in xrange(1, nconsumers + 1):
+            for j in range(1, nconsumers + 1):
                 if i % j == 0:
                     messagecounts[j - 1] += 1
 
         listeners = map(lambda x: x.messageListener, consumers)
         for i, (messagecount, listener) in enumerate(zip(messagecounts, listeners)):
             try:
-                for j in xrange(messagecount):
+                for j in range(messagecount):
                     message = listener.queue.get(block=True, timeout=5)
                     int1 = message.getIntProperty('int1')
                     self.assertEqual(0, int1 % (i + 1))
-            except Queue.Empty:
+            except queue.Empty:
                 msg = 'Expected %d messages for consumer %d, got %d'
-                self.assert_(False,  msg % (messagecount, i, j))
-            self.assert_(listener.queue.empty())
+                self.assertTrue(False,  msg % (messagecount, i, j))
+            self.assertTrue(listener.queue.empty())
 
 if __name__ == '__main__':
     import sys

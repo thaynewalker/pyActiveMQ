@@ -37,17 +37,17 @@ class test_openwire_sync(_test_sync, unittest.TestCase):
         message = session.createMessage()
         queue = self.random_queue(session)
         consumer = session.createConsumer(queue)
-        self.assert_(consumer.messageListener is None)
+        self.assertTrue(consumer.messageListener is None)
         producer = session.createProducer(queue)
         self.conn.start()
         producer.send(message)
         msg = consumer.receive(timeout=5000)
-        self.assert_(msg is not None)
-        self.assert_(isinstance(msg, pyactivemq.Message))
+        self.assertTrue(msg is not None)
+        self.assertTrue(isinstance(msg, pyactivemq.Message))
         #self.assertEqual(str(msg.destination), str(queue))
         self.assertEqual(queue, msg.destination)
         msg = consumer.receive(50)
-        self.assert_(msg is None)
+        self.assertTrue(msg is None)
 
     def _populate_MapMessage(self, mapMessage):
         mapMessage.setBoolean('bool1', True)
@@ -63,7 +63,7 @@ class test_openwire_sync(_test_sync, unittest.TestCase):
     def _check_MapMessage(self, mapMessage):
         self.assertEqual(9, len(mapMessage.mapNames))
         for name in mapMessage.mapNames:
-            self.assert_(mapMessage.itemExists(name))
+            self.assertTrue(mapMessage.itemExists(name))
         self.assertEqual(True, mapMessage.getBoolean('bool1'))
         self.assertEqual(123, mapMessage.getByte('byte1'))
         self.assertEqual('X', mapMessage.getChar('char1'))
@@ -77,8 +77,8 @@ class test_openwire_sync(_test_sync, unittest.TestCase):
     def test_MapMessage(self):
         session = self.conn.createSession()
         mapMessage = session.createMapMessage()
-        self.assert_(isinstance(mapMessage, pyactivemq.Message))
-        self.assert_(isinstance(mapMessage, pyactivemq.MapMessage))
+        self.assertTrue(isinstance(mapMessage, pyactivemq.Message))
+        self.assertTrue(isinstance(mapMessage, pyactivemq.MapMessage))
         self._populate_MapMessage(mapMessage)
         self._check_Message_properties(mapMessage)
         self._check_MapMessage(mapMessage)
@@ -93,10 +93,10 @@ class test_openwire_sync(_test_sync, unittest.TestCase):
         self.conn.start()
         producer.send(mapMessage)
         msg = consumer.receive(5000)
-        self.assert_(msg is not None)
+        self.assertTrue(msg is not None)
         self._check_MapMessage(msg)
         msg = consumer.receive(5000)
-        self.assert_(msg is None)
+        self.assertTrue(msg is None)
         self.conn.close()
 
     def test_nolocal(self):
@@ -111,10 +111,10 @@ class test_openwire_sync(_test_sync, unittest.TestCase):
         self.conn.start()
         producer.send(textMessage)
         msg = consumer1.receive(5000)
-        self.assert_(msg is not None)
+        self.assertTrue(msg is not None)
         # nolocal consumer shouldn't receive the message
         msg = consumer2.receive(500)
-        self.assert_(msg is None)
+        self.assertTrue(msg is None)
 
 if __name__ == '__main__':
     import sys

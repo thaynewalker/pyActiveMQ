@@ -17,21 +17,21 @@ set_local_path()
 import pyactivemq
 restore_path()
 
-import Queue
+import queue
 
 class _test_async:
     random_topic = random_topic
 
     class QueueMessageListener(pyactivemq.MessageListener):
-        def __init__(self, queue=None):
+        def __init__(self, q=None):
             # If the message listener class implements a
             # constructor but doesn't call the super constructor,
             # a Boost.Python.ArgumentError is raised.
             pyactivemq.MessageListener.__init__(self)
-            if queue is not None:
-                self.queue = queue
+            if q is not None:
+                self.queue = q
             else:
-                self.queue = Queue.Queue(0)
+                self.queue = queue.Queue(0)
 
         def onMessage(self, message):
             self.queue.put(message)
@@ -46,30 +46,30 @@ class _test_async:
         producer = producer_session.createProducer(topic)
 
         # create infinite queue that is shared by consumers
-        queue = Queue.Queue(0)
+        q = queue.Queue(0)
 
         # create multiple consumers in separate sessions
         # keep consumers in a list, because if we don't hold a
         # reference to the consumer, it is closed
         consumers = []
-        for i in xrange(nconsumers):
+        for i in range(nconsumers):
             session = self.conn.createSession()
             consumer = session.createConsumer(topic)
-            listener = self.QueueMessageListener(queue)
+            listener = self.QueueMessageListener(q)
             consumer.messageListener = listener
             consumers.append(consumer)
 
         self.conn.start()
         textMessage = producer_session.createTextMessage()
-        for i in xrange(nmessages):
+        for i in range(nmessages):
             textMessage.text = 'hello%d' % (i,)
             producer.send(textMessage)
 
         qsize = nmessages * nconsumers
         try:
-            for i in xrange(qsize):
-                message = queue.get(block=True, timeout=5)
-                self.assert_(message.text.startswith('hello'))
+            for i in range(qsize):
+                message = q.get(block=True, timeout=5)
+                self.assertTrue(message.text.startswith('hello'))
         except Queue.Empty:
-            self.assert_(False, 'Expected %d messages in queue' % qsize)
-        self.assert_(queue.empty())
+            self.assertTrue(False, 'Expected %d messages in queue' % qsize)
+        self.assertTrue(q.empty())
