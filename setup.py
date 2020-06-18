@@ -69,7 +69,8 @@ else:
     ver = '3.9.5'
     include_dirs = [
         '/opt/activemq-cpp-{ver}/include/activemq-cpp-{ver}'.format(ver=ver),
-        '/opt/activemq-cpp-library-{ver}/src/main'.format(ver=ver)
+        '/opt/activemq-cpp-library-{ver}/src/main'.format(ver=ver),
+        '/usr/include/apr-1.0/'
 
         ]
     libraries = [

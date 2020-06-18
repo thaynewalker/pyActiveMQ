@@ -22,6 +22,7 @@
 namespace py = boost::python;
 
 #include <cms/BytesMessage.h>
+#include <activemq/commands/ActiveMQBytesMessage.h>
 
 #include <iostream>
 
@@ -84,6 +85,15 @@ static const char* BytesMessage_writeUTF_docstring = "Writes an UTF string to th
 
 static PyObject* BytesMessage_getBodyBytes(BytesMessage const& self)
 {
+    try{
+      self.getBodyLength();
+    }catch(cms::MessageNotReadableException const& e){
+      // The message is write only - switch it...
+      try{
+        dynamic_cast<activemq::commands::ActiveMQBytesMessage &>(const_cast<BytesMessage&>(self)).setReadOnlyBody(true);
+      }catch(...){
+      }
+    }
     return PyBytes_FromStringAndSize(reinterpret_cast<char*>(self.getBodyBytes()), self.getBodyLength());
     //return py::incref(reinterpret_cast<const char*>(self.getBodyBytes()), self.getBodyLength()).ptr();
 }
